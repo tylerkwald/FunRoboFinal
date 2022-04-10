@@ -1,0 +1,78 @@
+classdef LIDAR
+    %UNTITLED Summary of this class goes here
+    %   Detailed explanation goes here
+
+    properties
+        lidar;
+        pol_data;
+        cart_data;
+    end
+
+    methods (Static)
+        function init()
+
+        end
+
+        function close()
+            fprintf(lidar, 'QT');
+            fclose(lidar);
+            clear lidar;
+        end
+    end
+    
+    methods
+        %% Constructor
+        function obj = LIDAR()
+            serialObjs = instrfind;      %Read instrument objects from memory to MATLAB workspace
+            if ~isempty(serialObjs)      %If there are old objects, close them
+                fclose(serialObjs);      %close serial port attatched to old Lidar
+                delete(serialObjs);      %delete old lidar objects
+            end
+            comPort = serialportlist("available");
+            disp("comPort Identified:")
+            lidar = serial(comPort,'BaudRate', 115200);  %create a serial port for Lidar
+            set(lidar,'Timeout',2);                     %set communication link timeout
+            set(lidar,'InputBufferSize',20000);         %set data input buffer size
+            set(lidar,'Terminator','LF/CR');            %set data stream terminator for fprintf
+            fopen(lidar);                   %connects the serial port object, the lidar
+            pause(0.3);                     %pauses to allow command to transmit
+            fprintf(lidar,'SCIP2.0');       %writes string cmd to the lidar
+            pause(0.3);                     %pause to allow cmd to the lidar
+            fscanf(lidar);                  %reads ASCII data from the device connected to lidar
+            fprintf(lidar,'VV');            %pause to allow data to be read
+            pause(0.3);
+            fscanf(lidar,'BM');
+            pause(0.3);
+            fscanf(lidar);
+            fprintf(lidar,'MD0044072500');  %dont worry about what commands are sent for now
+            pause(0.3);
+            fscanf(lidar);
+            clc
+        end
+
+        function data = scan(obj)
+
+        end
+
+        function filter(oangles, A, cutoffDist)
+            %Filters data to exclude points outside of cut off distance 
+            %Takes A in mm, angles in rad, cut off distance in mm
+            %Returns filtered data matrix
+            
+            A(A > cutoffDist) = 0;
+            A(A < 40) = 0;
+            
+            
+        end
+        
+        function data = polCart(polData)
+            %converts data to cartesian coordinates
+            %takes polar data, returns cartesian coordinate matrix
+        
+            X = polData(2, :).*cos(polData(1, :));          % Trig to find x-coord
+            Y = polData(2, :).*sin(polData(1, :));          % Trig to find y-coord 
+            data = [X; Y];
+                    
+        end
+    end
+end
