@@ -10,9 +10,9 @@ classdef LIDAR
 
     methods (Static)
 
-        function close()
-            fprintf(lidar, 'QT');
-            fclose(lidar);
+        function close(obj)
+            fprintf(obj.lidar, 'QT');
+            fclose(obj.lidar);
             clear lidar;
         end
     end
@@ -25,26 +25,31 @@ classdef LIDAR
                 fclose(serialObjs);      %close serial port attatched to old Lidar
                 delete(serialObjs);      %delete old lidar objects
             end
-            lidar = serial(comPort,'BaudRate', 115200);  %create a serial port for Lidar
-            set(lidar,'Timeout',2);                     %set communication link timeout
-            set(lidar,'InputBufferSize',20000);         %set data input buffer size
-            set(lidar,'Terminator','LF/CR');            %set data stream terminator for fprintf
-            fopen(lidar);                   %connects the serial port object, the lidar
+            pause(0.3);
+            obj.lidar = serial(comPort,'BaudRate', 115200);  %create a serial port for Lidar
+            set(obj.lidar,'Timeout',3);                     %set communication link timeout
+            set(obj.lidar,'InputBufferSize',20000);         %set data input buffer size
+            set(obj.lidar,'Terminator','LF/CR');            %set data stream terminator for fprintf
+            pause(0.3);
+            fopen(obj.lidar);                   %connects the serial port object, the lidar
             pause(0.3);                     %pauses to allow command to transmit
-            fprintf(lidar,'SCIP2.0');       %writes string cmd to the lidar
+            fprintf(obj.lidar,'SCIP2.0');       %writes string cmd to the lidar
             pause(0.3);                     %pause to allow cmd to the lidar
-            fscanf(lidar);                  %reads ASCII data from the device connected to lidar
-            fprintf(lidar,'VV');            %pause to allow data to be read
+            fscanf(obj.lidar);                  %reads ASCII data from the device connected to lidar
             pause(0.3);
-            fscanf(lidar,'BM');
+            fprintf(obj.lidar,'VV');            %pause to allow data to be read
             pause(0.3);
-            fscanf(lidar);
-            fprintf(lidar,'MD0044072500');  %dont worry about what commands are sent for now
+            fscanf(obj.lidar,'BM');
             pause(0.3);
-            fscanf(lidar);
+            fscanf(obj.lidar);
+            pause(0.3);
+            fprintf(obj.lidar,'MD0044072500');  %dont worry about what commands are sent for now
+            pause(0.3);
+            fscanf(obj.lidar);
+            pause(0.3);
             clc
         end
-        
+     
         %% SENSE
         function scan(obj, cutoffDist)
             %Filters data to exclude points outside of cut off distance 
@@ -53,7 +58,7 @@ classdef LIDAR
 
             angles = (-120:240/682:120-240/682) * pi / 180;
 
-            [A] = FunRoboLidarScan(obj.lidar);
+            [A] = FunRoboLidarScan(obj);
             
             A(A > cutoffDist) = 0;
             A(A < 40) = 0;
@@ -67,13 +72,12 @@ classdef LIDAR
 
         %% Prewritten Lidar Interface Functions
 
-        function [rangescan]=FunRoboLidarScan(lidar)
+        function [rangescan]=FunRoboLidarScan(obj)
             proceed=0;
-            fprintf(lidar,'GD0044072500');
-            
+            fprintf(obj.lidar,'GD0044072500');
             while (proceed==0)
-                if lidar.BytesAvailable >= 2134
-                    data = fscanf(lidar,'%c',2134);
+                if obj.lidar.BytesAvailable >= 2134
+                    data = fscanf(obj.lidar,'%c',2134);
                     proceed = 1;
                 end
             end
