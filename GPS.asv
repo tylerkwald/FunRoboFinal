@@ -1,0 +1,33 @@
+classdef GPS
+    %UNTITLED2 Summary of this class goes here
+    %   Detailed explanation goes here
+
+    properties
+        gps;
+        data;
+        roverX;
+        roverY;
+        roverHeading;
+    end
+
+    methods
+        function obj = GPS(comPort)
+            % Construct an instance of this class
+            %   Detailed explanation goes here
+            obj.gps = NEO_M8U_USB(comPort);         % Create a GPS Class Instance, replace COM7 with your COM#
+            pause(2);                          % Let GPS get up to speed
+        end
+
+        function readGPS(obj)
+            %METHOD1 Summary of this method goes here
+            %   Detailed explanation goes here
+             % the function neo.getBasic()
+            % returns a struct with fields: longitude, lattitude, roll, pitch, and heading.
+                   
+            obj.data = neo.getBasic()
+            roverX = basic_data.longitude
+            roverY = basic_data.longitude
+            rover = basic_data.longitude
+        end
+    end
+end
