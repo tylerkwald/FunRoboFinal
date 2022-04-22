@@ -12,7 +12,7 @@ classdef Camera
         function obj = Camera()
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.cam = webcam(1);
+            obj.cam = webcam(2);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
             obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
@@ -27,9 +27,9 @@ classdef Camera
         end
 
         function I = disp_tags(obj)
-            I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize);
-            worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2];
+            I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same")
+            [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize)
+            worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2]
             % Get image coordinates for axes.
             for i = 1:length(pose)
             % Get image coordinates for axes.
@@ -47,9 +47,11 @@ classdef Camera
             end
         end
 
-        function loc = poses(obj)
+        function [id,loc, pose] = poses(obj)
+            % 
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize);
+            [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize)
+            imshow(I);
         end
 
     end
