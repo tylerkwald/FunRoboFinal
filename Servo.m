@@ -1,5 +1,5 @@
 classdef Servo
-   %class to control the servos on board the robot (camera pan, and steering)
+   %class to control the servos on board the robot (camera pan and steering)
    properties
      robotServo;
    end
