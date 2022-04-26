@@ -27,7 +27,7 @@ classdef Camera
         end
 
         function I = disp_tags(obj)
-            I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same")
+            I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
             [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize)
             worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2]
             % Get image coordinates for axes.
@@ -43,7 +43,7 @@ classdef Camera
     
                     I = insertText(I,loc(:,:,i),id(i),"BoxOpacity",1,"FontSize",25);
                 end
-                
+                imshow(I);
             end
         end
 
@@ -51,7 +51,7 @@ classdef Camera
             % 
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
             [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize)
-            imshow(I);
+            imshow(I)
         end
 
     end

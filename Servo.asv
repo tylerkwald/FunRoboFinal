@@ -1,5 +1,5 @@
 classdef Servo
-   %class to control the servos on board the robot (camera pan, and steering)
+   %class to control the servos on board the robot (camera pan and steering)
    properties
      robotServo;
    end
@@ -7,7 +7,7 @@ classdef Servo
    methods
        function obj = Servo(robotArduino, servoPin)
            %initalizes the function and sets up the variables to use
-           obj.robotServo = setUpServo(robotArduino, servoPin);
+           obj.robotServo = servo(robotArduino, servoPin, "MinPulseDuration", 1508 * 10 ^ -6, "MaxPulseDuration", 1512 * 10 ^ -6);
        end
 
        function moveServo(obj, moveAngle)
@@ -20,10 +20,5 @@ classdef Servo
             currentPosition = readPosition(obj.robotServo);
        end
        
-       function [robotServo] = setUpServo(robotArduino, servoPin)
-           %sets up the pin on the arduino for the servo.
-           configurePin(robotArduino, servoPin, "DigitalOutput");
-           robotServo = servo(robotArduino, servoPin, "MinPulseDuration", 1120 * 10 ^ -6, "MaxPulseDuration", 1925 * 10 ^ -6);          
-       end
    end
 end
