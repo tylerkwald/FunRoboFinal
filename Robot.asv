@@ -24,8 +24,6 @@ classdef Robot
         end
 
         function actOnWave(steeringWave, speedWave)
-            obj.steeringServo.moveServo(max(steeringWave))
-            obj.driveMotor.moveMotor(max(speedWave))
-        end
+            obj.steeringServo.
     end
 end
