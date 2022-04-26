@@ -66,7 +66,7 @@ classdef LIDAR
 
             X = obj.pol_data(2, :).*cos(obj.pol_data(1, :));          % Trig to find x-coord
             Y = obj.pol_data(2, :).*sin(obj.pol_data(1, :));          % Trig to find y-coord 
-            data = [X; Y];
+            data = [X; -Y];
         end
         
         %% GEtters and Setters
