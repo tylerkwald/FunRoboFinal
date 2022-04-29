@@ -6,6 +6,7 @@
 % Lightly modified by Olin Studnet 2019
 
 function [rangescan]=FunRoboLidarScan(lidar)
+
 proceed=0;
 fprintf(lidar,'GD0044072500');
 while (proceed==0)
@@ -25,7 +26,7 @@ end
 i = find(data == data(13));
 rangedata=data(i(3)+1:end-1);
 for j=0:31
-onlyrangedata((64*j)+1:(64*j)+64)=rangedata(1+(66*j):64+(66*j));
+    onlyrangedata((64*j)+1:(64*j)+64)=rangedata(1+(66*j):64+(66*j));
 end
 j=0;
 for i=1:floor(numel(onlyrangedata)/3)
@@ -35,6 +36,7 @@ end
 for k=1:size(encodeddist,1)
     rangescan(k)=decodeSCIP(encodeddist(k,:));
 end
+
 
 
 
