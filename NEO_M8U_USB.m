@@ -55,15 +55,6 @@ classdef NEO_M8U_USB
             end
               obj.device = serialport(com_port, NEO_M8U_USB.DEFAULT_BAUD_RATE);
             
-            obj.plot = figure('Name','Rover Position','NumberTitle','off','Visible','on');
-            % Zoom down the plot to the Olin Oval coordinates in Latitude and Longitude
-            geolimits([42.29246 42.29418],[-71.26537 -71.26258])
-            % plot rover poition, you can change this line to plot roverX and RoverY 
-            geoplot(42.2935, -71.264, 'r*')
-            % Import a satellite photo basemap to draw on
-            geobasemap satellite
-            legend('Rover GPS Track')
-            movegui(gpsRoverPlot,'south');
         end
         function response = sendUBX(obj, ubx_msg)
             
