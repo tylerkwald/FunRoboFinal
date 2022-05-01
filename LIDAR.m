@@ -57,7 +57,7 @@ classdef LIDAR
             angles = (-120:240/682:120-240/682) * pi / 180;
 
             [A] = FunRoboLidarScan(obj.lidar);
-            disp(A);
+            
             
             A(A > cutoffDist) = 0;
             A(A < 20) = 0;
