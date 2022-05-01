@@ -65,18 +65,26 @@ classdef Camera
         end
         
         function [newPosition, tag] = scanForTags(obj, cameraServo)
-            if cameraServo.getPosition() > 0
-              target = -90;
-            else
-               target = 90;
-            end
-            cameraServo.movePosition(target)
-            while cameraServo.getPosition() ~= target
+
+            cameraServo.moveServo(0)
+            pause(1.0)
+            while true
                 [newPosition, tag] = obj.updatePositionApril();
                  if tag ~= -1
                     return
                  end
-           end           
+                 if cameraServo.getPosition() < 0.2
+                     direction = 1;
+                 end
+                 if  cameraServo.getPosition() > 0.8 
+                     direction = -1;
+                 end
+
+                 cameraServo.moveServo(cameraServo.getPosition() + .1* direction)
+                     pause(.5)
+            end           
+            tag = -1;
+            newPosition = -1;
         end
         
 
