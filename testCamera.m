@@ -3,7 +3,7 @@ camera = Camera();
 %camera.show()
 % pause(4.0)
 % I = camera.disp_tags();
-% [id, lock, pose] = camera.poses();
+% [id, lock, pose]= camera.poses();
 % distance = zeros(size(pose));
 % p = size(pose);
 % for i = 1:p(2)
