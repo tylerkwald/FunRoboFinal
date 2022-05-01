@@ -8,6 +8,7 @@ classdef Robot
         driveMotor;
         robotArduino;
         gps;
+        arbiter;
     end
 
     methods
@@ -21,11 +22,13 @@ classdef Robot
             driveMotor = Motor(robotArduino, drivePin);
             cameraServo = Motor(robotArduino, cameraSteerPin);
             sharpIR = SharpIR(robotArduino, sharpPinList);
+            arbiter = Arbiter();
         end
 
-        function actOnWave(steeringWave, speedWave)
-            obj.steeringServo.moveServo(max(steeringWave))
-            obj.driveMotor.moveMotor(max(speedWave))
+        function ACT()
+            [heading, speed] = arbiter.arbitrate(WF, OA)
+            obj.steeringServo.moveServo(heading)
+            obj.driveMotor.moveMotor(speed)
         end
     end
 end

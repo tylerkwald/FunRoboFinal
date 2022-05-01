@@ -79,6 +79,10 @@ classdef Camera
            end           
         end
         
-       
+
+        function redCircleCalibrate(obj)
+            img = snapshot(obj.cam);
+            imtool(img)
+        end
     end
 end
