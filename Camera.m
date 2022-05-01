@@ -12,7 +12,7 @@ classdef Camera
         function obj = Camera()
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.cam = webcam(2);
+            obj.cam = webcam(1);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
             obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
