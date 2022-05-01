@@ -17,7 +17,6 @@ classdef Camera
             obj.cam.Brightness = 0;
             obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
             obj.tagSize = 0.165;
-
         end
 
         function show(obj)
@@ -28,7 +27,7 @@ classdef Camera
 
         function I = disp_tags(obj)
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize)
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
             worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2]
             % Get image coordinates for axes.
             for i = 1:length(pose)
@@ -43,16 +42,43 @@ classdef Camera
     
                     I = insertText(I,loc(:,:,i),id(i),"BoxOpacity",1,"FontSize",25);
                 end
-                imshow(I);
+                imshow(I);6
             end
         end
 
         function [id,loc, pose] = poses(obj)
             % 
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, obj.intrinsics, obj.tagSize)
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
             imshow(I)
         end
-
+        
+        function [newPosition, tag] = updatePositionApril(obj)
+           [id, loc, pose] = obj.poses();
+           if size(id) ~= 0
+           tag = id(1);
+           newPosition = pose(1,1).Translation;
+           else
+           newPosition = -1;
+           tag = -1;
+           end
+        end
+        
+        function [newPosition, tag] = scanForTags(obj, cameraServo)
+            if cameraServo.getPosition() > 0
+              target = -90;
+            else
+               target = 90;
+            end
+            cameraServo.movePosition(target)
+            while cameraServo.getPosition() ~= target
+                [newPosition, tag] = obj.updatePositionApril();
+                 if tag ~= -1
+                    return
+                 end
+           end           
+        end
+        
+       
     end
 end
