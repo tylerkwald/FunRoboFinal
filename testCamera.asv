@@ -20,12 +20,12 @@
 %  servoPin = "D6";
 %  cameraServo = Motor(robotArduino, servoPin);
  cameraServo.getPosition()
- cameraServo.moveServo(0)
+ cameraServo.moveServo(0.5)
  cameraServo.getPosition()
  pause(1.0)
 %steerServo.moveServo(0.1)
 %writePosition(cameraServo.robotServo, 0.1);
-%[newPosition, tag, Position, angle, pose, v] = camera.scanForTags(cameraServo);
+[newPosition, tag, Position, angle] = camera.scanForTags(cameraServo);
 %[newPosition, tag] = camera.updatePositionApril();
 disp(newPosition)
 disp(tag)
