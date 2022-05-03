@@ -16,15 +16,17 @@ clc                     % clear command window
 clear                   % clear MATLAB workspace
 clf
 camera = Camera();
-robotArduino = arduino('COM3','Nano33BLE',"Libraries",{'Servo','I2C'});
- servoPin = "D6";
- cameraServo = Motor(robotArduino, servoPin);
- cameraServo.getPosition()
- cameraServo.moveServo(0.5)
- cameraServo.getPosition()
+%camera.show()
+% robotArduino = arduino('COM3','Nano33BLE',"Libraries",{'Servo','I2C'});
+%  servoPin = "D6";
+%  cameraServo = Motor(robotArduino, servoPin);
+%  cameraServo.getPosition()
+%  cameraServo.moveServo(0.5)
+%  cameraServo.getPosition()
 %steerServo.moveServo(0.1)
 %writePosition(cameraServo.robotServo, 0.1);
-[newPosition, tag] = camera.scanForTags(cameraServo);
+%[newPosition, tag] = camera.scanForTags(cameraServo);
+[newPosition, tag] = camera.updatePositionApril;
 disp(newPosition)
 disp(tag)
 %[tag, newPosition] = camera.updatePositionApril()

@@ -12,7 +12,7 @@ classdef Camera
         function obj = Camera()
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.cam = webcam(1);
+            obj.cam = webcam(2);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
             obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
@@ -57,7 +57,7 @@ classdef Camera
            [id, loc, pose] = obj.poses();
            if size(id) ~= 0
            tag = id(1);
-           newPosition = pose(1,1).Translation;
+           [newPosition] = pose(1,1).Translation;
            else
            newPosition = -1;
            tag = -1;
@@ -71,6 +71,7 @@ classdef Camera
             while true
                 [newPosition, tag] = obj.updatePositionApril();
                  if tag ~= -1
+                     
                     return
                  end
                  if cameraServo.getPosition() < 0.2
