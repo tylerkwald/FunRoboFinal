@@ -12,7 +12,7 @@ classdef Camera
         function obj = Camera()
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.cam = webcam(2);
+            obj.cam = webcam(1);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
             %obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
@@ -29,8 +29,8 @@ classdef Camera
 
         function I = disp_tags(obj)
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
-            worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2]
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize);
+            worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2];
             % Get image coordinates for axes.
             for i = 1:length(pose)
             % Get image coordinates for axes.
@@ -44,7 +44,7 @@ classdef Camera
     
                     I = insertText(I,loc(:,:,i),id(i),"BoxOpacity",1,"FontSize",25);
                 end
-                imshow(I);6
+                imshow(I);
             end
         end
 
@@ -97,12 +97,12 @@ classdef Camera
             newPosition = -1;
         end
         
-        function [Position, tag] = getAprilPosition(obj, cameraServo)
+        function [Position, angle, tag] = getAprilPosition(obj)%, cameraServo)
             [newPosition, pose, tag] = obj.updatePositionApril();
             if tag ~= -1
                distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
                angle = atand(newPosition(1)/newPosition(3));
-               angle = angle + cameraServo.getPosition() * 210;
+               angle = angle + 90;%cameraServo.getPosition() * 210;
                xOffSet = distance * cosd(angle);
                yOffSet = distance * sind(angle);
                Position = [xOffSet, yOffSet];
@@ -111,6 +111,7 @@ classdef Camera
 %                v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
             else
                 Position = [0,0];
+                angle = 90;
             end
         end
 
