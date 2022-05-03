@@ -101,7 +101,8 @@ classdef Camera
             [newPosition, pose, tag] = obj.updatePositionApril();
             if tag ~= -1
                distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
-               angle = cameraServo.getPosition() * 210;
+               angle = atand(newPosition(1)/newPosition(3));
+               angle = angle + cameraServo.getPosition() * 210;
                xOffSet = distance * cosd(angle);
                yOffSet = distance * sind(angle);
                Position = [xOffSet, yOffSet];
