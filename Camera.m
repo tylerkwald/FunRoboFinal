@@ -15,7 +15,9 @@ classdef Camera
             obj.cam = webcam(1);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
-            obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
+            %obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
+            obj.intrinsics = cameraIntrinsics([2.2820e+03 2.2839e+03], [876.5396 641.8974], [1200 1600], ...
+                "RadialDistortion", [-0.4397 0.6058])
             obj.tagSize = 0.165;
         end
 

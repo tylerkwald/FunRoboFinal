@@ -1,6 +1,6 @@
 % clear vars
-% camera = Camera();
-% %camera.show()
+ camera = Camera();
+camera.show()
 % % pause(4.0)
 % % I = camera.disp_tags();
 % % [id, lock, pose]= camera.poses();
@@ -24,9 +24,9 @@
  cameraServo.getPosition()
  pause(1.0)
 %steerServo.moveServo(0.1)
-%writePosition(cameraServo.robotServo, 0.1);
-%[newPosition, tag, Position, angle, pose, v] = camera.scanForTags(cameraServo);
-%[newPosition, tag] = camera.updatePositionApril();
+writePosition(cameraServo.robotServo, 0.1);
+[newPosition, tag, Position, angle, pose, v] = camera.scanForTags(cameraServo);
+% [newPosition, tag] = camera.updatePositionApril();
 disp(newPosition)
 disp(tag)
 %[tag, newPosition] = camera.updatePositionApril()
