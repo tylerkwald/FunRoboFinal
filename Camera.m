@@ -51,8 +51,8 @@ classdef Camera
         function [id,loc, pose] = poses(obj)
             % 
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
-            imshow(I)
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize);
+            imshow(I);
         end
         
         function [newPosition, pose, tag] = updatePositionApril(obj)
