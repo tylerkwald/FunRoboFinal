@@ -15,7 +15,9 @@ classdef Camera
             obj.cam = webcam(2);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
-            obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
+            %obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
+            obj.intrinsics = cameraIntrinsics([2.2820e+03 2.2839e+03], [876.5396 641.8974], [1200 1600], ...
+                "RadialDistortion", [-0.4397 0.6058])
             obj.tagSize = 0.165;
         end
 
@@ -49,11 +51,11 @@ classdef Camera
         function [id,loc, pose] = poses(obj)
             % 
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
-            imshow(I)
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize);
+            imshow(I);
         end
         
-        function [newPosition, tag] = updatePositionApril(obj)
+        function [newPosition, pose, tag] = updatePositionApril(obj)
            [id, loc, pose] = obj.poses();
            if size(id) ~= 0
            tag = id(1);
@@ -64,14 +66,21 @@ classdef Camera
            end
         end
         
-        function [newPosition, tag] = scanForTags(obj, cameraServo)
+        function [newPosition, tag, Position, angle, pose, v] = scanForTags(obj, cameraServo)
 
             cameraServo.moveServo(0)
             pause(1.0)
             while true
-                [newPosition, tag] = obj.updatePositionApril();
+                [newPosition, pose, tag] = obj.updatePositionApril();
                  if tag ~= -1
-                     
+                    distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
+                    angle = cameraServo.getPosition() * 210;
+                    xOffSet = distance * cosd(angle);
+                    yOffSet = distance * sind(angle);
+                    Position = [xOffSet, yOffSet];
+                    matrix = transpose(pose(1,1).T)
+                      %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;
+                        v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
                     return
                  end
                  if cameraServo.getPosition() < 0.2
@@ -88,6 +97,21 @@ classdef Camera
             newPosition = -1;
         end
         
+        function [Position, tag] = getAprilPosition(obj, cameraServo)
+            [newPosition, pose, tag] = obj.updatePositionApril();
+            if tag ~= -1
+               distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
+               angle = cameraServo.getPosition() * 210;
+               xOffSet = distance * cosd(angle);
+               yOffSet = distance * sind(angle);
+               Position = [xOffSet, yOffSet];
+%                matrix = transpose(pose(1,1).T);
+%                       %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;
+%                v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
+            else
+                Position = [0,0];
+            end
+        end
 
         function redCircleCalibrate(obj)
             img = snapshot(obj.cam);
