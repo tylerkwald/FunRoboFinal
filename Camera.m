@@ -84,6 +84,7 @@ classdef Camera
                     matrix = transpose(pose(1,1).T)
                       %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;     
                     return
+                     end
                  end
                  if cameraServo.getPosition() < 0.2
                      direction = 1;
