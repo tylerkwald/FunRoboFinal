@@ -49,7 +49,7 @@ classdef LIDAR
         end
      
         %% SENSE
-        function data = scan(obj, cutoffDist)
+        function [data, pol_data] = scan(obj, cutoffDist)
             %Filters data to exclude points outside of cut off distance 
             %Takes A in mm, angles in rad, cut off distance in mm
             %Returns filtered data matrix
@@ -67,6 +67,7 @@ classdef LIDAR
             X = obj.pol_data(2, :).*cos(obj.pol_data(1, :));          % Trig to find x-coord
             Y = obj.pol_data(2, :).*sin(obj.pol_data(1, :));          % Trig to find y-coord 
             data = [-Y; X];
+            pol_data = obj.pol_data;
         end
         
         %% GEtters and Setters

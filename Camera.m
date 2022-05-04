@@ -15,7 +15,9 @@ classdef Camera
             obj.cam = webcam(1);
             obj.cam.WhiteBalance = "manual";
             obj.cam.Brightness = 0;
-            obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
+            %obj.intrinsics = cameraIntrinsics([5*1600 5*1200], [800 600], [1200 1600]);
+            obj.intrinsics = cameraIntrinsics([2.2820e+03 2.2839e+03], [876.5396 641.8974], [1200 1600], ...
+                "RadialDistortion", [-0.4397 0.6058])
             obj.tagSize = 0.165;
         end
 
@@ -27,8 +29,8 @@ classdef Camera
 
         function I = disp_tags(obj)
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
-            worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2]
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize);
+            worldPoints = [0 0 0; obj.tagSize/2 0 0; 0 obj.tagSize/2 0; 0 0 obj.tagSize/2];
             % Get image coordinates for axes.
             for i = 1:length(pose)
             % Get image coordinates for axes.
@@ -42,22 +44,22 @@ classdef Camera
     
                     I = insertText(I,loc(:,:,i),id(i),"BoxOpacity",1,"FontSize",25);
                 end
-                imshow(I);6
+                imshow(I);
             end
         end
 
         function [id,loc, pose] = poses(obj)
             % 
             I = undistortImage(snapshot(obj.cam),obj.intrinsics,"OutputView","same");
-            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize)
-            imshow(I)
+            [id,loc,pose] = readAprilTag(I, "tag36h11", obj.intrinsics, obj.tagSize);
+            %imshow(I);
         end
         
         function [newPosition, pose, tag] = updatePositionApril(obj)
            [id, loc, pose] = obj.poses();
            if size(id) ~= 0
            tag = id(1);
-           newPosition = pose(1,1).Translation;
+           [newPosition] = pose(1,1).Translation;
            else
            newPosition = -1;
            tag = -1;
@@ -97,6 +99,23 @@ classdef Camera
             newPosition = -1;
         end
         
+        function [Position, angle, tag] = getAprilPosition(obj)%, cameraServo)
+            [newPosition, pose, tag] = obj.updatePositionApril();
+            if tag ~= -1
+               distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
+               angle = atand(newPosition(1)/newPosition(3));
+               angle = angle + 90;%cameraServo.getPosition() * 210;
+               xOffSet = distance * cosd(angle);
+               yOffSet = distance * sind(angle);
+               Position = [xOffSet, yOffSet];
+%                matrix = transpose(pose(1,1).T);
+%                       %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;
+%                v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
+            else
+                Position = [0,0];
+                angle = 90;
+            end
+        end
 
         function goForBridge(obj)
             img = snapshot(obj.cam);
