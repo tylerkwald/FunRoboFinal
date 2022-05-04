@@ -70,15 +70,17 @@ classdef Camera
             pause(1.0)
             while true
                 [newPosition, pose, tag] = obj.updatePositionApril();
+                v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
                  if tag ~= -1
+                     if tag == 5 && v(3) < 1.75
+                        
                     distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
                     angle = cameraServo.getPosition() * 210;
                     xOffSet = distance * cosd(angle);
                     yOffSet = distance * sind(angle);
                     Position = [xOffSet, yOffSet];
                     matrix = transpose(pose(1,1).T)
-                      %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;
-                        v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
+                      %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;     
                     return
                  end
                  if cameraServo.getPosition() < 0.2
@@ -96,7 +98,7 @@ classdef Camera
         end
         
 
-        function redCircleCalibrate(obj)
+        function goForBridge(obj)
             img = snapshot(obj.cam);
             imtool(img)
         end

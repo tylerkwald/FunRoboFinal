@@ -53,7 +53,7 @@ classdef Camera
             imshow(I)
         end
         
-        function [newPosition, tag] = updatePositionApril(obj)
+        function [newPosition, pose, tag] = updatePositionApril(obj)
            [id, loc, pose] = obj.poses();
            if size(id) ~= 0
            tag = id(1);
@@ -64,18 +64,21 @@ classdef Camera
            end
         end
         
-        function [newPosition, tag, Position, angle] = scanForTags(obj, cameraServo)
+        function [newPosition, tag, Position, angle, pose, v] = scanForTags(obj, cameraServo)
 
             cameraServo.moveServo(0)
             pause(1.0)
             while true
-                [newPosition, tag] = obj.updatePositionApril();
+                [newPosition, pose, tag] = obj.updatePositionApril();
                  if tag ~= -1
                     distance = sqrt(newPosition(1)^2 + newPosition(3)^2);
-                    angle = cameraServo.getPosition() * 180;
+                    angle = cameraServo.getPosition() * 210;
                     xOffSet = distance * cosd(angle);
                     yOffSet = distance * sind(angle);
-                    Position = [xOffSet, yOffSet]
+                    Position = [xOffSet, yOffSet];
+                    matrix = transpose(pose(1,1).T)
+                      %v = [0, 0, 0, 1] * (pose(1,1).T)^-1;
+                        v =  transpose(pose(1,1).T) * [0; 0; 0; 1];
                     return
                  end
                  if cameraServo.getPosition() < 0.2
@@ -93,7 +96,7 @@ classdef Camera
         end
         
 
-        function redCircleCalibrate(obj)
+        function goForBridge(obj)
             img = snapshot(obj.cam);
             imtool(img)
         end
